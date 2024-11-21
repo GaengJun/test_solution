@@ -1,0 +1,224 @@
+﻿<Window x:Class="MES.Solution.Views.InventoryManagementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="재고 관리"
+        Width="800"
+        Height="600"
+        AllowsTransparency="True"
+        Background="Transparent"
+        MouseDown="Window_MouseDown"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None">
+
+    <Border Margin="10"
+            Background="White"
+            CornerRadius="20">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="15"
+                              Direction="-90"
+                              Opacity="0.2"
+                              ShadowDepth="2" />
+        </Border.Effect>
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  제어 버튼 영역  -->
+            <Grid>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="BtnMinimize"
+                            Width="40"
+                            Height="40"
+                            Margin="0,0,5,0"
+                            Click="BtnMinimize_Click"
+                            Content="−"
+                            FontSize="20"
+                            Style="{StaticResource IconButtonStyle}" />
+
+                    <Button x:Name="BtnClose"
+                            Width="40"
+                            Height="40"
+                            Click="BtnClose_Click"
+                            Content="×"
+                            FontSize="20"
+                            Style="{StaticResource IconButtonStyle}" />
+                </StackPanel>
+            </Grid>
+
+            <!--  제목  -->
+            <TextBlock Grid.Row="1"
+                       Margin="0,0,0,20"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Text="{Binding WindowTitle}" />
+
+            <!--  입력 폼  -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+
+                <!--  재고 조정 유형  -->
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="조정 유형" />
+                <StackPanel Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="0,0,20,15"
+                            Orientation="Horizontal">
+                    <RadioButton Margin="0,0,20,0"
+                                 VerticalAlignment="Center"
+                                 Content="추가"
+                                 GroupName="AdjustmentType"
+                                 IsChecked="{Binding IsAddition}" />
+                    <RadioButton VerticalAlignment="Center"
+                                 Content="제거"
+                                 GroupName="AdjustmentType"
+                                 IsChecked="{Binding IsSubtraction}" />
+                </StackPanel>
+                <!--  거래일자  -->
+                <TextBlock Grid.Row="0"
+                           Grid.Column="2"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="거래일자" />
+                <DatePicker Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="0,0,0,15"
+                            SelectedDate="{Binding TransactionDate}" />
+
+
+                <!--  제품  -->
+                <TextBlock Grid.Row="1"
+                           Grid.Column="0"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="제품" />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1"
+                           Margin="0,0,20,15"
+                           VerticalAlignment="Center"
+                           Text="{Binding SelectedProduct.ProductName}" />
+
+                <!--  현재고  -->
+                <TextBlock Grid.Row="1"
+                           Grid.Column="2"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="현재고" />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="3"
+                           Margin="0,0,0,15"
+                           VerticalAlignment="Center"
+                           Text="{Binding CurrentStock, StringFormat={}{0:N0}}" />
+
+                <!--  수량  -->
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="수량" />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Margin="0,0,20,15"
+                         Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+
+                <!--  단위  -->
+                <TextBlock Grid.Row="2"
+                           Grid.Column="2"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="단위" />
+                <TextBlock Grid.Row="2"
+                           Grid.Column="3"
+                           Margin="0,0,0,15"
+                           VerticalAlignment="Center"
+                           Text="{Binding SelectedProduct.Unit}" />
+
+                <!--  담당자  -->
+                <TextBlock Grid.Row="3"
+                           Grid.Column="0"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Center"
+                           Text="담당자" />
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="0,0,20,15"
+                         Text="{Binding ResponsiblePerson}" />
+
+                <!--  비고 부분에 중복된 TextBox가 있어서 문제가 발생했습니다. 하나로 통합하겠습니다.  -->
+                <!--  조정사유를 비고로 변경하고 항상 표시되도록 수정  -->
+                <TextBlock Grid.Row="4"
+                           Grid.Column="0"
+                           Margin="0,0,10,15"
+                           VerticalAlignment="Top"
+                           Text="비고" />
+                <TextBox Grid.Row="4"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="3"
+                         Height="60"
+                         Margin="0,0,0,15"
+                         VerticalAlignment="Top"
+                         AcceptsReturn="True"
+                         Text="{Binding AdjustmentReason}"
+                         TextWrapping="Wrap" />
+                <TextBox Grid.Row="4"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="3"
+                         Height="60"
+                         Margin="0,0,0,15"
+                         VerticalAlignment="Top"
+                         AcceptsReturn="True"
+                         Text="{Binding AdjustmentReason}"
+                         TextWrapping="Wrap"
+                         Visibility="{Binding IsAdjustment, Converter={StaticResource BoolToVis}}" />
+
+                <!--  에러 메시지  -->
+                <TextBlock Grid.Row="5"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="4"
+                           Foreground="Red"
+                           Text="{Binding ErrorMessage}"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}" />
+            </Grid>
+
+            <!--  버튼 영역  -->
+            <StackPanel Grid.Row="3"
+                        Margin="0,20,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Button Width="100"
+                        Height="35"
+                        Margin="0,0,10,0"
+                        Command="{Binding SaveCommand}"
+                        Content="저장"
+                        Style="{StaticResource RoundedButtonStyle}" />
+                <Button Width="100"
+                        Height="35"
+                        Command="{Binding CancelCommand}"
+                        Content="취소"
+                        Style="{StaticResource RoundedButtonStyle}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

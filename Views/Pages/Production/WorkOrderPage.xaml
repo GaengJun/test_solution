@@ -1,0 +1,273 @@
+﻿<Page x:Class="MES.Solution.Views.Pages.WorkOrderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MES.Solution.Views.Pages"
+      Title="작업지시">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 타이틀 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 검색 조건 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 설비상태 및 제어버튼 -->
+            <RowDefinition Height="Auto"/>
+            <!-- 작업순서 버튼 -->
+            <RowDefinition Height="*"/>
+            <!-- 작업지시 목록 -->
+        </Grid.RowDefinitions>
+        <!-- 타이틀 -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="작업지시" Style="{StaticResource PageTitleStyle}"/>
+
+            <ToggleButton Grid.Column="1"
+                         Content="{Binding CurrentOperationMode, 
+                                 Converter={StaticResource EnumToStringConverter}, 
+                                 ConverterParameter='자동|수동'}"
+                         IsChecked="{Binding IsAutoMode}"
+                         Command="{Binding ToggleOperationModeCommand}"
+                         Style="{StaticResource RoundedToggleButtonStyle}"
+                         Width="120"/>
+        </Grid>
+
+        <!-- 검색 조건 -->
+        <Border Grid.Row="1" 
+                Style="{StaticResource CardStyle}"
+                Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 작업일자 -->
+                <TextBlock Text="작업일자:"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <DatePicker Grid.Column="1"
+                          SelectedDate="{Binding WorkDate}"
+                          Margin="0,0,20,0"/>
+
+                <!-- 근무조 -->
+                <TextBlock Grid.Column="2" 
+                         Text="근무조:"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <ComboBox Grid.Column="3"
+                         ItemsSource="{Binding Shifts}"
+                         SelectedItem="{Binding SelectedShift}"
+                         Margin="0,0,20,0"/>
+
+                <!-- 생산라인 -->
+                <TextBlock Grid.Column="4" 
+                         Text="생산라인:"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <ComboBox Grid.Column="5"
+                         ItemsSource="{Binding ProductionLines}"
+                         SelectedItem="{Binding SelectedLine}"
+                         Margin="0,0,20,0"/>
+
+                <CheckBox Grid.Column="6"
+                      Content="전체 기간 보기"
+                      ToolTip="체크하면 모든 날짜의 데이터를 표시합니다"
+                      IsChecked="{Binding IsAllWorkOrdersChecked, Mode=TwoWay}"
+                      VerticalAlignment="Center"
+                      Margin="10,0,0,0"/>
+
+                <CheckBox Grid.Column="7"
+                      Content="완료 항목만"
+                      ToolTip="체크하면 완료된 항목만 표시합니다"
+                      IsChecked="{Binding IsCompletedOnlyChecked, Mode=TwoWay}"
+                      VerticalAlignment="Center"
+                      Margin="10,0,0,0"/>
+
+                <!-- 검색 버튼 -->
+                <Button Grid.Column="8"
+                        Content="검색"
+                        Command="{Binding SearchCommand}"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        HorizontalAlignment="Right"
+                        Width="100"/>
+            </Grid>
+        </Border>
+
+        <!-- 설비 상태 및 제어 버튼 -->
+        <Grid Grid.Row="2" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 설비 상태 -->
+            <ItemsControl Grid.Column="0"
+                         ItemsSource="{Binding LineEquipments}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,10,0" 
+                                BorderBrush="{StaticResource BorderBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="4" 
+                                Padding="10"
+                                Width="200">
+                            <StackPanel>
+                                <TextBlock Text="{Binding EquipmentId}" 
+                                         FontWeight="SemiBold" 
+                                         Margin="0,0,0,5"/>
+                                <TextBlock>
+                                    <Run Text="상태: "/>
+                                    <Run Text="{Binding Status}" 
+                                         Foreground="{Binding Status, 
+                                            Converter={StaticResource StatusToColorConverter}}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="작업: "/>
+                                    <Run Text="{Binding CurrentWorkOrder}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="생산량: "/>
+                                    <Run Text="{Binding ProducedCount}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- 제어 버튼 -->
+            <StackPanel Grid.Column="1" 
+            Orientation="Horizontal"
+            Margin="10,0,0,0">
+                <Button Content="작업시작"
+            Command="{Binding StartWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"
+            Margin="0,0,10,0"/>
+                <Button Content="일시정지"
+            Command="{Binding PauseWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"
+            Margin="0,0,10,0"/>
+                <Button Content="작업재개"
+            Command="{Binding ResumeWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"
+            Margin="0,0,10,0"/>
+                <Button Content="작업완료"
+            Command="{Binding CompleteWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"
+            Margin="0,0,10,0"/>
+                <Button Content="지연"
+            Command="{Binding CancelWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"
+            Margin="0,0,10,0"/>
+                <Button Content="재시작"
+            Command="{Binding RestartWorkCommand}"
+            Style="{StaticResource RoundedButtonStyle}"
+            Width="100"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 작업 순서 버튼 -->
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,10">
+            <Button Content="▲"
+                    Command="{Binding MoveUpCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Width="40"
+                    Height="40"
+                    Margin="0,0,10,0"/>
+            <Button Content="▼"
+                    Command="{Binding MoveDownCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Width="40"
+                    Height="40"
+                    Margin="0,0,10,0"/>
+            <Button Content="순서저장"
+                    Command="{Binding SaveSequenceCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"/>
+        </StackPanel>
+
+        <!-- 작업 순서 버튼 -->
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,10">
+            <Button Content="▲"
+                    Command="{Binding MoveUpCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Width="40"
+                    Height="40"
+                    Margin="0,0,10,0"/>
+            <Button Content="▼"
+                    Command="{Binding MoveDownCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Width="40"
+                    Height="40"
+                    Margin="0,0,10,0"/>
+            <Button Content="순서저장"
+                    Command="{Binding SaveSequenceCommand}"
+                    Style="{StaticResource RoundedButtonStyle}"/>
+        </StackPanel>
+
+        <!-- 작업지시 목록 -->
+        <DataGrid Grid.Row="4"
+                  ItemsSource="{Binding WorkOrders}"
+                  SelectedItem="{Binding SelectedWorkOrder}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="작업지시번호" Binding="{Binding WorkOrderNumber}" Width="120"/>
+                <DataGridTextColumn Header="생산일" Binding="{Binding ProductionDate, StringFormat=yyyy-MM-dd}" Width="100"/>
+                <DataGridTextColumn Header="제품코드" Binding="{Binding ProductCode}" Width="100"/>
+                <DataGridTextColumn Header="제품명" Binding="{Binding ProductName}" Width="*"/>
+                <DataGridTextColumn Header="지시량" Binding="{Binding OrderQuantity}" Width="80"/>
+                <DataGridTextColumn Header="생산량" Binding="{Binding ProductionQuantity}" Width="80"/>
+                <DataGridTextColumn Header="작업순서" Binding="{Binding Sequence}" Width="80"/>
+                <DataGridTextColumn Header="근무조" Binding="{Binding Shift}" Width="80"/>
+                <DataGridTemplateColumn Header="상태" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="4" 
+                                    Padding="8,4"
+                                    Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}">
+                                <TextBlock Text="{Binding Status}"
+                                         Foreground="White"
+                                         HorizontalAlignment="Center"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

@@ -1,0 +1,278 @@
+﻿<Page x:Class="MES.Solution.Views.Pages.InventoryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:MES.Solution.Views.Pages"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Title="재고관리">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!--  타이틀 영역  -->
+            <RowDefinition Height="Auto" />
+            <!--  검색 조건  -->
+            <RowDefinition Height="300" />
+            <!--  차트 영역 높이 지정  -->
+            <RowDefinition Height="*" />
+            <!--  재고 목록  -->
+        </Grid.RowDefinitions>
+
+        <!--  타이틀 영역  -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="재고관리" />
+
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                
+                <Button Command="{Binding DeleteCommand}"
+                    Content="    삭제    "
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Margin="0,0,10,0"/>
+                <!--<Button Command="{Binding RegisterInventoryCommand}"
+                        Content="재고 등록"
+                        Style="{StaticResource RoundedButtonStyle}" />-->
+
+            </StackPanel>
+        </Grid>
+
+        <!--  검색 조건  -->
+        <Border Grid.Row="1"
+                Margin="0,0,0,20"
+                Style="{StaticResource CardStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!--  제품군  -->
+                <TextBlock Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           Text="제품군:" />
+                <ComboBox Grid.Column="1"
+                          Margin="0,0,20,0"
+                          Height="20"
+                          ItemsSource="{Binding ProductGroups}"
+                          SelectedItem="{Binding SelectedProductGroup}" />
+
+                <!--  제품명  -->
+                <TextBlock Grid.Column="2"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           Text="제품명:" />
+                <TextBox Grid.Column="3"
+                         Height="20"
+                         Margin="0,0,20,0"
+                         Text="{Binding ProductNameFilter, UpdateSourceTrigger=PropertyChanged}" />
+
+                <CheckBox Grid.Column="5"
+                      Margin="0,0,10,0"
+                      VerticalContentAlignment="Center"
+                      Content="통합 재고 보기"
+                      IsChecked="{Binding IsShowCurrentStockOnly}" />
+
+                <!--  검색 버튼  -->
+                <Button Grid.Column="6"
+                        Width="100"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        Command="{Binding SearchCommand}"
+                        Content="검색"
+                        Style="{StaticResource RoundedButtonStyle}" />
+            </Grid>
+        </Border>
+
+        <!--  차트 영역  -->
+        <Grid Grid.Row="2" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  제품군별 재고현황  -->
+            <Border Margin="0,0,5,0" Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <TextBlock Margin="0,0,0,15"
+                               DockPanel.Dock="Top"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Text="제품군별 재고현황" />
+                    <lvc:CartesianChart Height="auto"
+                                        LegendLocation="Right"
+                                        Series="{Binding ProductGroupChartData}">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="제품군" Labels="{Binding GroupChartLabels}" />
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="재고량" LabelFormatter="{Binding QuantityFormatter}" />
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </DockPanel>
+            </Border>
+
+            <!--  시간에 따른 재고변화  -->
+            <Border Grid.Column="1"
+                    Margin="5,0"
+                    Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <TextBlock Margin="0,0,0,15"
+                               DockPanel.Dock="Top"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Text="재고 변화 추이" />
+                    <lvc:CartesianChart x:Name="TrendChart"
+                                        Height="auto"
+                                        DisableAnimations="True"
+                                        LegendLocation="Right"
+                                        Series="{Binding InventoryTrendChartData}">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="날짜"
+                                      FontSize="12"
+                                      Labels="{Binding TrendChartLabels}">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="7" />
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="재고량"
+                                      FontSize="12"
+                                      LabelFormatter="{Binding QuantityFormatter}" />
+                        </lvc:CartesianChart.AxisY>
+                        <lvc:CartesianChart.DataTooltip>
+                            <lvc:DefaultTooltip BulletSize="10"
+                                                ShowSeries="True"
+                                                ShowTitle="True">
+                                <lvc:DefaultTooltip.ContentTemplate>
+                                    <DataTemplate>
+                                        <ItemsControl ItemsSource="{Binding}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="2" Orientation="Horizontal">
+                                                        <TextBlock Margin="0,0,5,0"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="{Binding Series.Stroke}"
+                                                                   Text="{Binding Series.Title}" />
+                                                        <TextBlock Text=": " />
+                                                        <TextBlock Text="{Binding ChartPoint.Instance, StringFormat={}{0:N0}}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </DataTemplate>
+                                </lvc:DefaultTooltip.ContentTemplate>
+                            </lvc:DefaultTooltip>
+                        </lvc:CartesianChart.DataTooltip>
+                        <lvc:CartesianChart.ChartLegend>
+                            <lvc:DefaultLegend BulletSize="15" />
+                        </lvc:CartesianChart.ChartLegend>
+                    </lvc:CartesianChart>
+                </DockPanel>
+            </Border>
+
+            <!--  재고 수량 파이차트  -->
+            <Border Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <TextBlock Margin="0,0,0,15"
+                               DockPanel.Dock="Top"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Text="제품군별 재고 비율" />
+                    <lvc:PieChart Height="auto"
+                                  LegendLocation="Bottom"
+                                  Series="{Binding QuantityPieChartData}">
+                        <lvc:PieChart.ChartLegend>
+                            <lvc:DefaultLegend BulletSize="10" />
+                        </lvc:PieChart.ChartLegend>
+                    </lvc:PieChart>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!--  재고 목록  -->
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}">
+            <DockPanel>
+                <Grid Margin="0,0,0,15" DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock FontSize="16"
+                               FontWeight="SemiBold"
+                               Text="재고 목록" />
+
+                </Grid>
+
+                <DataGrid Grid.Row="3" 
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          ItemsSource="{Binding Inventories}"
+          MouseDoubleClick="DataGrid_MouseDoubleClick"
+          SelectedItem="{Binding SelectedInventory}"
+          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="40">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTextColumn Width="120"
+                                            Binding="{Binding ProductCode}"
+                                            Header="제품코드" />
+                        <DataGridTextColumn Width="100"
+                                            Binding="{Binding ProductGroup}"
+                                            Header="제품군" />
+                        <DataGridTextColumn Width="*"
+                                            Binding="{Binding ProductName}"
+                                            Header="제품명" />
+                        <DataGridTextColumn Width="80"
+                                            Binding="{Binding CurrentQuantity}"
+                                            Header="현재고" />
+                        <DataGridTextColumn Width="60"
+                                            Binding="{Binding Unit}"
+                                            Header="단위" />
+                        <DataGridTextColumn Width="100"
+                                            Binding="{Binding UnitPrice, StringFormat={}{0:N0}}"
+                                            Header="단가" />
+                        <DataGridTextColumn Width="100"
+                                            Binding="{Binding TotalValue, StringFormat={}{0:N0}}"
+                                            Header="재고금액" />
+                        <DataGridTextColumn Width="120"
+                                            Binding="{Binding LastUpdateDate, TargetNullValue='거래일 없음', StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                            Header="거래일자" />
+                        <DataGridTextColumn Width="80"
+                                            Binding="{Binding TransactionType}"
+                                            Header="거래유형" />
+                        <DataGridTextColumn Width="100"
+                                            Binding="{Binding ResponsiblePerson}"
+                                            Header="담당자" />
+                        <DataGridTextColumn Width="150"
+                                            Binding="{Binding Remarks}"
+                                            Header="비고" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Page>

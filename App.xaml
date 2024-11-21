@@ -1,0 +1,405 @@
+﻿<Application x:Class="MES.Solution.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:MES.Solution.Helpers.Converters"
+             xmlns:local="clr-namespace:MES.Solution"
+             StartupUri="Views/LoginWindow.xaml"><!--첫화면-->
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--  익스팬더용  -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+            <!--  Converters  -->
+            <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+            <converters:DateToStringConverter x:Key="DateToStringConverter" />
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <converters:NumberToVisibilityConverter x:Key="NumberToVisibilityConverter"/>
+            <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
+            
+            
+
+            <!--  색상 팔레트  -->
+            <Color x:Key="PrimaryColor">#1976D2</Color>
+            <Color x:Key="PrimaryLightColor">#63A4FF</Color>
+            <Color x:Key="PrimaryDarkColor">#004BA0</Color>
+            <Color x:Key="AccentColor">#4CAF50</Color>
+            <Color x:Key="TextPrimaryColor">#212121</Color>
+            <Color x:Key="TextSecondaryColor">#757575</Color>
+            <Color x:Key="BackgroundColor">#F5F5F5</Color>
+            <Color x:Key="SurfaceColor">#FFFFFF</Color>
+            <Color x:Key="ErrorColor">#D32F2F</Color>
+            <Color x:Key="WarningColor">#FFA000</Color>
+            <Color x:Key="SuccessColor">#388E3C</Color>
+
+            <!--  브러시  -->
+            <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+            <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}" />
+            <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}" />
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+            <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+            <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
+            <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+            <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+
+            <!--  검증 메시지 스타일  -->
+            <Style x:Key="ValidationMessage" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="0,2,0,0" />
+            </Style>
+
+            <!--  그림자 효과  -->
+            <DropShadowEffect x:Key="ShadowEffect"
+                              BlurRadius="15"
+                              Direction="-90"
+                              Opacity="0.2"
+                              RenderingBias="Quality"
+                              ShadowDepth="2" />
+
+            <Style x:Key="MenuButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="#B3FFFFFF" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Height" Value="45" />
+                <Setter Property="Padding" Value="20,0" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#40FFFFFF" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  서브 메뉴 버튼 스타일  -->
+            <Style x:Key="SubMenuButtonStyle"
+                   BasedOn="{StaticResource MenuButtonStyle}"
+                   TargetType="Button">
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Padding" Value="40,0,20,0" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+
+            <!--  Expander 스타일  -->
+            <Style x:Key="MenuExpander" TargetType="Expander">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="#B3FFFFFF" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Expander">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Header  -->
+                                <Border x:Name="HeaderBorder"
+                                        Grid.Row="0"
+                                        Height="45"
+                                        Padding="20,0"
+                                        Background="Transparent">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ContentPresenter Grid.Column="0"
+                                                          VerticalAlignment="Center"
+                                                          ContentSource="Header"
+                                                          RecognizesAccessKey="True" />
+
+                                        <Path x:Name="arrow"
+                                              Grid.Column="1"
+                                              Width="8"
+                                              Height="4"
+                                              Margin="0,0,5,0"
+                                              VerticalAlignment="Center"
+                                              Data="M0,0 L8,0 L4,4 Z"
+                                              Fill="{TemplateBinding Foreground}"
+                                              RenderTransformOrigin="0.5,0.5">
+                                            <Path.RenderTransform>
+                                                <RotateTransform Angle="0" />
+                                            </Path.RenderTransform>
+                                        </Path>
+                                    </Grid>
+                                </Border>
+
+                                <!--  Content  -->
+                                <Border x:Name="ContentBorder"
+                                        Grid.Row="1"
+                                        Background="#22FFFFFF">
+                                    <ContentPresenter x:Name="ExpandSite"
+                                                      Margin="0"
+                                                      Visibility="Collapsed" />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsExpanded" Value="True">
+                                    <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="arrow" Property="RenderTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="180" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="HeaderBorder" Property="Background" Value="#40FFFFFF" />
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="RoundedButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="#2196F3" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5">
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#1976D2" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#0D47A1" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#CCCCCC" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  아이콘 버튼 스타일  -->
+            <Style x:Key="IconButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="Foreground" Value="#666666" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#F5F6F7" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  RadioButton 스타일  -->
+            <Style x:Key="MenuRadioButtonStyle" TargetType="RadioButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="#B3FFFFFF" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Height" Value="45" />
+                <Setter Property="Padding" Value="20,0" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#40FFFFFF" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="#40FFFFFF" />
+                        <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--  토글버튼 스타일  -->
+            <Style x:Key="RoundedToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Background" Value="#E0E0E0" />
+                <!--  비활성화 상태 배경  -->
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="BorderBrush" Value="#BDBDBD" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="10,5" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="14" />
+                <!--Setter Property="FontWeight" Value="SemiBold" /-->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="20">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <!--  IsChecked 상태  -->
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="#4CAF50" />
+                        <!--  활성화 상태 배경  -->
+                        <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                    <!--  마우스 오버 상태  -->
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#90CAF9" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Trigger>
+                    <!--  비활성화 상태  -->
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#E0E0E0" />
+                        <Setter Property="Foreground" Value="#9E9E9E" />
+                        <Setter Property="BorderBrush" Value="#BDBDBD" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
+            <!--  카드 컨테이너 스타일  -->
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="10"
+                                          Direction="-90"
+                                          Opacity="0.1"
+                                          ShadowDepth="3" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  페이지 타이틀 스타일  -->
+            <Style x:Key="PageTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Margin" Value="0,0,0,20" />
+                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+            </Style>
+
+            <!--  DataGrid 스타일  -->
+            <Style TargetType="DataGrid">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="#E0E0E0" />
+                <Setter Property="GridLinesVisibility" Value="None" />
+                <Setter Property="RowHeaderWidth" Value="0" />
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="CanUserAddRows" Value="False" />
+                <Setter Property="CanUserDeleteRows" Value="False" />
+                <Setter Property="CanUserReorderColumns" Value="False" />
+                <Setter Property="CanUserResizeRows" Value="False" />
+                <Setter Property="SelectionMode" Value="Single" />
+                <Setter Property="SelectionUnit" Value="FullRow" />
+                <Setter Property="AlternatingRowBackground" Value="#F5F5F5" />
+            </Style>
+
+            <!--  PLC 상태 카드 스타일  -->
+            <Style x:Key="PlcCardStyle" TargetType="Border">
+                <Setter Property="Width" Value="120" />
+                <Setter Property="Height" Value="150" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="5"
+                                          Opacity="0.2"
+                                          ShadowDepth="2" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  PLC 상태 표시 원 스타일  -->
+            <Style x:Key="StatusIndicatorStyle" TargetType="Ellipse">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Margin" Value="0,5" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="3"
+                                          Opacity="0.3"
+                                          ShadowDepth="1" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  PLC 이름 스타일  -->
+            <Style x:Key="PlcNameStyle" TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+
+            <!--  PLC 상태 텍스트 스타일  -->
+            <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="0,0,0,10" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,3 @@
+ALTER TABLE dt_shipment 
+ADD COLUMN status VARCHAR(20) DEFAULT '대기' 
+CHECK (status IN ('대기', '확정', '취소'));

@@ -1,0 +1,174 @@
+﻿<Page x:Class="MES.Solution.Views.Pages.Contract.ContractPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MES.Solution.Views.Pages.Contract" xmlns:viewmodels="clr-namespace:MES.Solution.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ContractViewModel}"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ContractPage">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 타이틀 -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="수주관리" 
+                      Style="{StaticResource PageTitleStyle}"/>
+
+            <StackPanel Grid.Column="1" 
+                       Orientation="Horizontal" 
+                       HorizontalAlignment="Right">
+                <Button Content="엑셀 다운로드"
+                        Command="{Binding ExportCommand}"
+                        Style="{StaticResource RoundedButtonStyle}"
+                        Margin="0,0,10,0"/>
+                <Button Content="수주 등록"
+                        Command="{Binding AddCommand}"
+                        Style="{StaticResource RoundedButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 검색 조건 -->
+        <Border Grid.Row="1" 
+                Style="{StaticResource CardStyle}"
+                Margin="0,0,0,20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 첫 번째 줄 -->
+                <TextBlock Text="주문일자:"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <DatePicker Grid.Column="1"
+                          SelectedDate="{Binding StartDate,UpdateSourceTrigger=PropertyChanged}"
+                            DisplayDate="{Binding EndDate}"
+                          Margin="0,0,20,0"/>
+
+                <TextBlock Grid.Column="2" 
+                         Text="~"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <DatePicker Grid.Column="3"
+                          SelectedDate="{Binding EndDate,UpdateSourceTrigger=PropertyChanged}"
+                          Margin="0,0,20,0"/>
+
+                <TextBlock Grid.Column="4" 
+                         Text="거래처명:"
+                         VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+                <ComboBox Grid.Column="5"
+                         ItemsSource="{Binding Companies}"
+                         SelectedItem="{Binding SelectedCompany}"
+                         Margin="0,0,20,0"/>
+
+                <!-- 두 번째 줄 -->
+                <TextBlock Grid.Row="1" 
+                         Text="제품:"
+                         VerticalAlignment="Center"
+                         Margin="0,10,10,0"/>
+                <ComboBox Grid.Row="1"
+                         Grid.Column="1"
+                         ItemsSource="{Binding Products}"
+                         SelectedItem="{Binding SelectedProduct}"
+                         Margin="0,10,20,0"/>
+
+                <TextBlock Grid.Row="1"
+                         Grid.Column="2" 
+                         Text="생산계획:"
+                         VerticalAlignment="Center"
+                         Margin="0,10,10,0"/>
+                <ComboBox Grid.Row="1"
+                         Grid.Column="3"
+                         ItemsSource="{Binding SelectedProductionPlan}"
+                         SelectedItem="{Binding SelectedPlan}"
+                         Margin="0,10,20,0"/>
+
+                <Button Grid.Row="1"
+                       Grid.Column="6"
+                       Content="검색"
+                       Command="{Binding SearchCommand}"
+                       Style="{StaticResource RoundedButtonStyle}"
+                       HorizontalAlignment="Right"
+                       Width="100"/>
+            </Grid>
+        </Border>
+
+        <!-- 데이터 그리드 -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Contracts}"
+                  SelectedItem="{Binding SelectedContract}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="주문번호" 
+                                  Binding="{Binding OrderNumber}" 
+                                  Width="120"/>
+                <DataGridTextColumn Header="주문일자" 
+                                  Binding="{Binding OrderDate, StringFormat=yyyy-MM-dd}" 
+                                  Width="100"/>
+                <DataGridTextColumn Header="거래처코드" 
+                                  Binding="{Binding CompanyCode}" 
+                                  Width="100"/>
+                <DataGridTextColumn Header="거래처명" 
+                                  Binding="{Binding CompanyName}" 
+                                  Width="150"/>
+                <DataGridTextColumn Header="제품코드" 
+                                  Binding="{Binding ProductCode}" 
+                                  Width="100"/>
+                <DataGridTextColumn Header="제품명" 
+                                  Binding="{Binding ProductName}" 
+                                  Width="150"/>
+                <DataGridTextColumn Header="수량" 
+                                  Binding="{Binding Quantity}" 
+                                  Width="80"/>
+                <DataGridTextColumn Header="납품일자" 
+                                  Binding="{Binding DeliveryDate, StringFormat=yyyy-MM-dd}" 
+                                  Width="100"/>
+                <DataGridTextColumn Header="생산계획" 
+                                  Binding="{Binding ProductionPlan}" 
+                                  Width="80"/>
+                <DataGridTextColumn Header="비고" 
+                                  Binding="{Binding Remarks}" 
+                                  Width="*"/>
+                <DataGridTextColumn Header="담당자" 
+                                  Binding="{Binding EmployeeName}" 
+                                  Width="100"/>
+                <!--<DataGridTemplateColumn Header="작업" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="상세"
+                                    Command="{Binding DataContext.ViewDetailCommand, 
+                                              RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource RoundedButtonStyle}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
